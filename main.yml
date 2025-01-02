@@ -1,4 +1,7 @@
 ---
+- name: "Démarrage de l'application easytravel"
+  hosts: all
+  tasks:
     - name: Vérification et arrêt du processus existant pour chaque item
       ansible.builtin.shell: |
         ps -ef | grep weblauncher.jar | head -n 1 | awk '{print $2}' | xargs -r kill -9
@@ -12,7 +15,7 @@
         - easytravel6
       ignore_errors: yes
       become: yes
-      tags: weblauncher  
+      tags: weblauncher
 
     - name: Ouverture des ports nécessaires pour chaque item
       ansible.builtin.firewalld:
@@ -24,7 +27,7 @@
       become: yes
       notify:
         - Reload firewalld
-      tags: weblauncher    
+      tags: weblauncher
 
     - name: Démarrage du launcher pour chaque item
       ansible.builtin.shell: |
@@ -40,15 +43,16 @@
         - easytravel5
         - easytravel6
       become: yes
-      tags: weblauncher  
+      tags: weblauncher
 
-     handlers:
-      - name: Reload firewalld
-        ansible.builtin.service:
-         name: firewalld
-         state: reloaded
-    vars:
-       ports:
-        - 8094
-        - 8080
+  handlers:
+    - name: Reload firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: reloaded
+
+  vars:
+    ports:
+      - 8094
+      - 8080
 
